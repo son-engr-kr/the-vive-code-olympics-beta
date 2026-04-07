@@ -210,3 +210,11 @@
 - **B 에이전트**: failed, 5 actions, 5 errors (navigate 5번 전부 실패)
 - **심판**: Absolute URL 즉시 승리
 - 이유: "successful user experience" vs "failed completely with multiple errors"
+
+### Test 3: Proper Title(A) vs Default Title "Create Next App"(B)
+- A: testlab-mu.vercel.app (title="BookFinder — Discover Your Next Favorite Book")
+- B: testlab-single-cta.vercel.app (title="Create Next App")
+- **둘 다 에이전트**: completed, 2 actions, 0 errors (동일)
+- **심판**: Proper Title 승리
+- 이유: "more comprehensive testing with specific recommendations for accessibility and SEO"
+- **insight**: title 태그 자체가 심판 결과에 간접 영향 (postmortem recommendations 품질 차이)
