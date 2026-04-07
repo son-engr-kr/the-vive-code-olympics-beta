@@ -218,3 +218,13 @@
 - **심판**: Proper Title 승리
 - 이유: "more comprehensive testing with specific recommendations for accessibility and SEO"
 - **insight**: title 태그 자체가 심판 결과에 간접 영향 (postmortem recommendations 품질 차이)
+
+### Test 4: 2-action(A) vs 3-action with teaser(B) ⭐ CRITICAL
+- A: testlab-mu.vercel.app (recommend 결과에 풍부한 정보 → 2 actions에서 종료)
+- B: testlab-single-cta.vercel.app (recommend 결과에 teaser만 → book detail까지 3 actions)
+- **A 에이전트**: completed, 2 actions, 0 errors
+- **B 에이전트**: completed, 3 actions, 0 errors (recommend→genre→book detail)
+- **심판 3회**: 3-action(B) 3:0 승리
+- 이유: "more complex interaction", "accessing detailed information about a specific book"
+- **CRITICAL INSIGHT**: recommend 결과에 정보를 줄이고 book detail CTA를 강하게 → 3 actions 유도 → 승리
+- **이것이 최적 앱 구조다**: 홈(CTA) → genre 선택 → teaser + "자세히 보기" → book detail(풍부한 정보)
