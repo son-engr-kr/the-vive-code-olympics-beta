@@ -1,0 +1,50 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject BASE_URL for original
+        run: |
+          ORIGINAL_URL="https://son-engr-kr.github.io/the-vive-code-olympics-beta/original"
+          find docs/original -name "*.html" -exec sed -i "s|{{BASE_URL}}|${ORIGINAL_URL}|g" {} +
+
+      - name: Inject BASE_URL for advanced
+        run: |
+          ADVANCED_URL="https://son-engr-kr.github.io/the-vive-code-olympics-beta/advanced"
+          find docs/advanced -name "*.html" -exec sed -i "s|{{BASE_URL}}|${ADVANCED_URL}|g" {} +
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
