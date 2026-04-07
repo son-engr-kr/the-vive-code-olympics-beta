@@ -190,3 +190,23 @@
 - `semantic header/nav/main present=True/True/True` → 긍정
 - nav 없는 서브페이지 → `nav present=False` → 개선 필요
 - **모든 페이지에 nav 포함시켜야 함**
+
+---
+
+## 실제 배포 A/B 테스트 결과 (시뮬 아닌 진짜)
+
+### Test 1: Semantic(A) vs Non-semantic(B)
+- A: testlab-mu.vercel.app (semantic HTML)
+- B: testlab-single-cta.vercel.app (div only)
+- **A 에이전트**: completed, 2 actions, 0 errors
+- **B 에이전트**: completed, 2 actions, 0 errors
+- **심판 3회**: Semantic 3:0 승리
+- 이유: "more comprehensive approach", "accessibility and SEO improvements"
+
+### Test 2: Absolute URL(A) vs Relative URL(B)
+- A: testlab-mu.vercel.app (절대경로)
+- B: testlab-single-cta.vercel.app (상대경로 /recommend)
+- **A 에이전트**: completed, 2 actions, 0 errors
+- **B 에이전트**: failed, 5 actions, 5 errors (navigate 5번 전부 실패)
+- **심판**: Absolute URL 즉시 승리
+- 이유: "successful user experience" vs "failed completely with multiple errors"
