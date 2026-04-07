@@ -246,3 +246,34 @@
 - 같은 3 actions라도 페이지에 정보가 더 많으면 이김
 - **최적 전략 수정: action 수를 늘리려 하지 말고, 각 페이지의 정보를 풍부하게**
 - related items, ratings, descriptions, chapters 등 → findings가 자연스럽게 풍부해짐
+
+### Test 6: Full homepage(A) vs CTA-only homepage(B)
+- A: 책 목록 + CTA + about 링크
+- B: CTA만 + 간단한 설명
+- **둘 다**: completed, 3 actions, 0 errors
+- **심판**: Full homepage(A) 승리
+- 이유: "more detailed analysis of user experience"
+- **insight**: 홈에 콘텐츠가 많을수록 postmortem이 풍부해짐
+
+### Test 7: No-nav subpages(A) vs Nav on all pages(B)
+- B에 breadcrumb nav (`Home → Genres → dystopian`) 추가
+- **둘 다**: completed, 3 actions, 0 errors
+- **심판**: A(nav 없는) 승리
+- 이유: "smoother user experience", "effective and intuitive navigation"
+- **insight**: breadcrumb nav가 오히려 HTML을 복잡하게 만들어 불리할 수 있음
+- **CF31: nav 추가가 반드시 유리하지 않음 — 간결한 구조가 이길 수 있음**
+
+### Test 8: Link navigate(A) vs Form-based flow(B)
+- B: select + input 폼으로 추천 받기
+- **A**: completed, 3 actions, 0 errors (navigate x3)
+- **B**: completed, 2 actions, 0 errors (navigate + execute_js form submit)
+- **심판**: Link navigate(A) 승리
+- 이유: "three successful navigations leading to full details" vs "only retrieved a recommendation"
+- **CF32: 폼보다 링크 navigate가 유리** — 더 많은 페이지 방문 = 더 풍부한 findings
+
+### Test 9: orange-ruddy.vercel.app
+- **결과**: loop_detected, 3 actions, 0 errors
+- 에이전트가 `#predictBtn` 3번 클릭 → 변화 없음 → 루프
+- **원인**: 버튼 클릭 결과가 HTML에 반영 안 됨 (JS 동적 렌더링)
+- **vs 우리 앱**: 우리 승
+- **CF33: 버튼 클릭 후 결과가 HTML에 없으면 루프 판정**
