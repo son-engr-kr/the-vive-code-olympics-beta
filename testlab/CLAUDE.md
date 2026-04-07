@@ -75,17 +75,19 @@ export const metadata: Metadata = {
 | completed + 많은 actions + 에러 | "헤맸고 문제 있음" → 불리 |
 | failed / loop_detected | **즉시 패배** |
 
-## 검증된 앱 구조
+## 검증된 최적 앱 구조 (실제 A/B 테스트로 확정)
 
 ```
 홈페이지 (풍부한 콘텐츠 + 명확한 CTA)
-  → 기능 페이지 (선택지)          ← 1 action
-    → 결과 페이지 (구체적 결과)    ← 2 action
-                                   → finish (completed, 0 errors)
+  → 기능 페이지 (선택지)                   ← 1 action
+    → 결과 페이지 (teaser만 + 강한 CTA)    ← 2 action
+      → 상세 페이지 (풍부한 정보)           ← 3 action → finish
 ```
 
+- **3 actions가 2 actions를 3:0으로 이김** (실제 배포 테스트)
+- 핵심: 결과 페이지에 **teaser만** 보여주고 상세 CTA로 유도
+- 상세 페이지에 title, author, year, rating, description, chapters 전부
 - 풍부한 기능 > 단순한 기능 (Multi CTA 6:0 Single CTA)
-- 에이전트가 실제로 기능을 사용하고 성공하는 모습을 보여줘야 함
 
 ## 심판이 보는 것 / 안 보는 것
 

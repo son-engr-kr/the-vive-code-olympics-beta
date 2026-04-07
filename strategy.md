@@ -49,17 +49,23 @@ completed + 2-3 actions(성공적 기능 플로우) + 0 errors = 승리
 └── 다른 기능 링크
 ```
 
-에이전트 플로우: 홈 → CTA 클릭 (1 action) → 선택 (2 action) → 상세 페이지 (3 action) → finish
+에이전트 플로우 (검증된 최적):
+```
+홈 (콘텐츠 + CTA)
+  → recommend 페이지 (장르 선택)           ← 1 action
+    → recommend 결과 (teaser만 + 강한 CTA)  ← 2 action
+      → book detail (풍부한 정보)            ← 3 action → finish
+```
 
-### 최적 action 수 = 3 (라운드로빈 검증)
-- 2 vs 3 → 3 승 (더 풍부한 플로우)
-- 2 vs 5 → 5 승 (더 상세한 findings)
-- 3 vs 5 → 3 승 (더 효율적)
-- **3 actions + 풍부한 findings + 0 errors = 최강 조합**
+### 최적 action 수 = 3 (실제 A/B 배포 테스트로 검증)
+- 2 actions(풍부한 결과) vs 3 actions(teaser→detail) → **3 actions 3:0 승리**
+- 핵심 트릭: recommend 결과에 **teaser만** 보여주고 → book detail CTA를 강하게
+- 에이전트가 자연스럽게 3단계 플로우를 따라감
+- book detail에 title, author, year, rating, description, chapters 전부 → 풍부한 findings
 
 ### 우리가 지는 조건
-- 상대가 풀 e-commerce 같은 깊고 풍부한 기능 플로우 (4 actions, 매우 상세한 findings)
-- 대응: 우리도 앱 기능을 깊게, findings가 풍부하게 나오도록 설계
+- 상대가 더 깊고 풍부한 기능 플로우 (4+ actions, 매우 상세한 findings, 0 errors)
+- 대응: 앱 기능을 깊게 + findings가 풍부하게 나오도록 설계
 
 ### 콘텐츠 전략
 - **홈에 충분한 정보**: 정보 찾기 Goal에 0 actions 대응
