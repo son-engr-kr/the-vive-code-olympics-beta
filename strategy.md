@@ -6,83 +6,65 @@
 - Goal: `"Try to accomplish something significant on this website"` (모든 참가자 동일)
 - Model: `gpt-4o-mini`, Max steps: `20`, Mode: `desktop`
 
-## 승리 공식 (40+ 실험, 6회 심판 시뮬로 검증)
+## 승리 공식 (실제 A/B 배포 테스트로 검증)
 
 ```
-completed + 2-3 actions(성공적 기능 플로우) + 0 errors = 승리
+completed + 3 actions(자연스러운 플로우) + 0 errors + 풍부한 findings = 승리
 ```
 
-### 왜 이게 이기는가
-- 0 actions = 심판이 "기능 부족"으로 판단 → 패배
-- 2-3 actions + 0 errors = "기능이 잘 작동하는 앱" → 승리
-- 에러 1개라도 있으면 → postmortem에 기록 → 감점
-- failed/loop_detected = 즉시 패배
+### 핵심: action 수보다 findings 풍부함이 결정적
+- 5 actions를 강제할 수 없음 (에이전트가 "충분하면" 멈춤)
+- 같은 3 actions라도 페이지에 정보가 더 많으면 이김
+- **각 페이지의 정보를 풍부하게** → findings가 자연스럽게 풍부해짐
 
-## 앱 설계 원칙
-
-### 필수
-1. **SSR or 정적 HTML** — CSR은 에이전트가 빈 HTML만 봐서 100% 실패
-2. **모든 href 절대경로** — 상대경로는 navigate 에러 → 루프 → 실패
-3. **모든 라우트 존재** — 404 나면 에러로 기록 → 감점
-4. **시맨틱 HTML** — postmortem에서 "Use semantic HTML" 추천 없어야 함
-5. **`<title>`, `<meta description>` 제대로 설정** — 기본값이면 감점
-6. **로그인 불필요** — 퍼블릭 접근
-7. **빠른 로딩** — 에이전트는 domcontentloaded만 기다림
-
-### 앱 구조 (검증된 최적 구조)
+## 검증된 최적 앱 구조
 
 ```
-홈페이지
-├── 앱 설명 (뭐하는 앱인지 명확히)
-├── 주요 콘텐츠 목록 (title, author, rating, description 등)
-├── 강한 CTA 버튼 → 기능 페이지
-├── 네비게이션 링크 (about 등)
-└── footer
-
-기능 페이지 (1단계)
-├── 선택지 제공 (카테고리, 장르 등)
-└── 각 선택지 → 결과 페이지 링크
-
-결과 페이지 (2단계)
-├── 결과 표시 (구체적 정보)
-├── 뒤로가기 링크
-└── 다른 기능 링크
+홈페이지 (콘텐츠 목록 + CTA)
+  → 기능 페이지 (선택지)                      ← 1 action
+    → 결과 페이지 (teaser만 + "자세히 보기" CTA)  ← 2 action
+      → 상세 페이지 (풍부한 정보 + related items)  ← 3 action → finish
 ```
 
-에이전트 플로우 (검증된 최적):
-```
-홈 (콘텐츠 + CTA)
-  → recommend 페이지 (장르 선택)           ← 1 action
-    → recommend 결과 (teaser만 + 강한 CTA)  ← 2 action
-      → book detail (풍부한 정보)            ← 3 action → finish
-```
+### 각 페이지 역할
+- **홈**: 앱 설명 + 전체 콘텐츠 + 강한 CTA (다양한 Goal 대응)
+- **기능 페이지**: 선택지 (카테고리/장르 등)
+- **결과 페이지**: teaser만! 풍부한 정보는 상세 페이지로 유도
+- **상세 페이지**: title, author, year, rating, description, chapters, related items 전부
 
-### 최적 action 수 = 3 (실제 A/B 배포 테스트로 검증)
-- 2 actions(풍부한 결과) vs 3 actions(teaser→detail) → **3 actions 3:0 승리**
-- 핵심 트릭: recommend 결과에 **teaser만** 보여주고 → book detail CTA를 강하게
-- 에이전트가 자연스럽게 3단계 플로우를 따라감
-- book detail에 title, author, year, rating, description, chapters 전부 → 풍부한 findings
+### 왜 이 구조가 이기는가 (A/B 테스트 증거)
+| 비교 | 결과 |
+|------|------|
+| 2 actions vs 3 actions | 3 actions 3:0 승 |
+| 기본 3 actions vs related books 있는 3 actions | related books 승 |
+| Multi CTA vs Single CTA | Multi CTA 3:0 승 |
+| Semantic vs Non-semantic | Semantic 3:0 승 |
+| Absolute URL vs Relative URL | Absolute 즉시 승 (상대 failed) |
+| Proper title vs Default title | Proper title 승 |
 
-### 우리가 지는 조건
-- 상대가 더 깊고 풍부한 기능 플로우 (4+ actions, 매우 상세한 findings, 0 errors)
-- 대응: 앱 기능을 깊게 + findings가 풍부하게 나오도록 설계
+## 앱 설계 필수 규칙
 
-### 콘텐츠 전략
-- **홈에 충분한 정보**: 정보 찾기 Goal에 0 actions 대응
-- **기능 플로우**: 기능 사용 Goal에 2-3 actions 대응
-- **about 페이지**: 정보 탐색 Goal에 1 action 대응
-- 풍부한 기능 > 단순한 기능 (심판이 "comprehensive functionality" 선호)
+### 절대 어기면 안 됨
+1. **SSR 필수** (CSR = 100% 실패)
+2. **모든 href 절대경로** (상대경로 = navigate 에러 → 5 errors → failed)
+3. **모든 라우트 존재** (404 = 감점)
+
+### 중요
+4. **시맨틱 HTML** (`<main>`, `<header>`, `<nav>`, `<section>`, `<article>`)
+5. **`<title>`, `<meta>` 제대로** (기본값 = postmortem에서 감점)
+6. **로그인 불필요** + 빠른 로딩
+7. **결과 페이지는 teaser만** (상세로 유도 → 3 actions)
+8. **상세 페이지 정보 풍부하게** (related items, chapters, ratings 등)
 
 ### 피해야 할 것
-- `"use client"` + `useEffect` 데이터 로딩 (CSR)
-- `if (!data) return null` (빈 페이지)
-- 상대경로 href (`/path` 대신 `https://domain/path`)
+- `"use client"` + `useEffect` 데이터 로딩
+- `if (!data) return null`
+- 상대경로 href
 - 로그인 필수 기능
 - 모달, 팝업, hover 인터랙션
-- JS-only 네비게이션 (href 없는 onClick)
 
-## 기술 스택 추천
-- **Next.js App Router** (SSR 기본)
-- **Tailwind CSS** (빠른 스타일링)
-- **Vercel** (즉시 배포)
-- headers()로 baseUrl 동적 생성 → 절대경로 자동화
+## 기술 스택
+- Next.js App Router (SSR 기본)
+- Tailwind CSS
+- Vercel 배포
+- `headers()`로 baseUrl 동적 생성 → 절대경로 자동화

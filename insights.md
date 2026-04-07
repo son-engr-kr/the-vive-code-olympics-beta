@@ -228,3 +228,21 @@
 - 이유: "more complex interaction", "accessing detailed information about a specific book"
 - **CRITICAL INSIGHT**: recommend 결과에 정보를 줄이고 book detail CTA를 강하게 → 3 actions 유도 → 승리
 - **이것이 최적 앱 구조다**: 홈(CTA) → genre 선택 → teaser + "자세히 보기" → book detail(풍부한 정보)
+
+### Test 5: 3-action(A) vs 5-action flow with related books(B)
+- B에 "You Might Also Like" related book 섹션 추가
+- **결과**: 에이전트가 related book까지 안 감 → 둘 다 3 actions
+- 에이전트는 "충분한 정보"를 보면 더 이상 navigate하지 않음
+- **5 actions를 강제할 수 없음** - 에이전트가 멈추는 시점은 에이전트가 결정
+
+### Test 5b: 같은 3 actions지만 related book 섹션 유무 차이
+- A: book detail에 기본 정보만
+- B: book detail에 기본 정보 + "You Might Also Like" 섹션
+- **심판**: B 승리
+- 이유: "more comprehensive experience", "additional context such as rating and thematic relevance"
+
+### ⭐ CF30: action 수보다 findings 풍부함이 더 중요
+- 5 actions를 강제할 수 없음 (에이전트가 "충분하면" 멈춤)
+- 같은 3 actions라도 페이지에 정보가 더 많으면 이김
+- **최적 전략 수정: action 수를 늘리려 하지 말고, 각 페이지의 정보를 풍부하게**
+- related items, ratings, descriptions, chapters 등 → findings가 자연스럽게 풍부해짐
