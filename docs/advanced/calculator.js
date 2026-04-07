@@ -1,38 +1,48 @@
 var BASE_SERVINGS = 4;
+var ingredientItems = []; // { el, baseText }
 
-document.addEventListener('DOMContentLoaded', function () {
-  // Auto-detect base servings from recipe-meta
-  var metaSpans = document.querySelectorAll('.recipe-meta span');
-  for (var i = 0; i < metaSpans.length; i++) {
-    var m = metaSpans[i].textContent.match(/Servings:\s*(\d+)/);
-    if (m) { BASE_SERVINGS = parseInt(m[1], 10); break; }
-  }
-
-  // Find ingredients <ul>: first <ul> after <h2>Ingredients</h2>
+function findIngredientsUl() {
   var headings = document.querySelectorAll('.recipe-body h2');
-  var ingredientsUl = null;
   for (var j = 0; j < headings.length; j++) {
     if (/^ingredients$/i.test(headings[j].textContent.trim())) {
       var el = headings[j].nextElementSibling;
       while (el && el.tagName !== 'UL') el = el.nextElementSibling;
-      if (el) ingredientsUl = el;
-      break;
+      return el || null;
     }
   }
+  return null;
+}
 
-  if (!ingredientsUl) return;
+function initCalculator() {
+  // Auto-detect base servings from recipe-meta
+  var spans = document.querySelectorAll('.recipe-meta span');
+  for (var i = 0; i < spans.length; i++) {
+    var m = spans[i].textContent.match(/Servings:\s*(\d+)/);
+    if (m) { BASE_SERVINGS = parseInt(m[1], 10); break; }
+  }
 
-  // Store base text on each ingredient <li>
-  ingredientsUl.querySelectorAll('li').forEach(function (li) {
-    li.setAttribute('data-base', li.textContent.trim());
-  });
+  var ul = findIngredientsUl();
+  if (!ul) return;
 
-  // Sync input and result text to actual base servings
+  // Store element reference + original text in JS (no DOM attribute needed)
+  var items = ul.querySelectorAll('li');
+  for (var k = 0; k < items.length; k++) {
+    ingredientItems.push({ el: items[k], baseText: items[k].textContent.trim() });
+  }
+
   var input = document.getElementById('servings');
   if (input) input.value = BASE_SERVINGS;
+
   var result = document.getElementById('servings-result');
   if (result) result.textContent = 'Showing quantities for ' + BASE_SERVINGS + ' servings';
-});
+}
+
+// Robust init: works whether script runs before or after DOMContentLoaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initCalculator);
+} else {
+  initCalculator();
+}
 
 function scaleNum(n, ratio) {
   var s = n * ratio;
@@ -48,26 +58,27 @@ function updateServings(value) {
   if (servings > 20) servings = 20;
   var ratio = servings / BASE_SERVINGS;
 
-  document.querySelectorAll('[data-base]').forEach(function (li) {
-    var text = li.getAttribute('data-base');
+  for (var i = 0; i < ingredientItems.length; i++) {
+    var text = ingredientItems[i].baseText;
+    var newText;
 
-    // Try range first: "12-16 leaves"
-    var newText = text.replace(
+    // Range: "12-16 leaves"
+    newText = text.replace(
       /^(\d+\.?\d*)\s*[-\u2013]\s*(\d+\.?\d*)/,
       function (_, lo, hi) {
         return scaleNum(parseFloat(lo), ratio) + '-' + scaleNum(parseFloat(hi), ratio);
       }
     );
 
-    // Then single leading number: "500g flour"
+    // Single leading number: "500g flour"
     if (newText === text) {
       newText = text.replace(/^(\d+\.?\d*)/, function (_, n) {
         return scaleNum(parseFloat(n), ratio);
       });
     }
 
-    li.textContent = newText;
-  });
+    ingredientItems[i].el.textContent = newText;
+  }
 
   var result = document.getElementById('servings-result');
   if (result) {
