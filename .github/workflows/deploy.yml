@@ -22,12 +22,12 @@ jobs:
 
       - name: Inject BASE_URL for original
         run: |
-          ORIGINAL_URL="https://hyoungseo.com/the-vive-code-olympics-beta/original"
+          ORIGINAL_URL="https://son-engr-kr.github.io/the-vive-code-olympics-beta/original"
           find docs/original -name "*.html" -exec sed -i "s|{{BASE_URL}}|${ORIGINAL_URL}|g" {} +
 
       - name: Inject BASE_URL for advanced
         run: |
-          ADVANCED_URL="https://hyoungseo.com/the-vive-code-olympics-beta/advanced"
+          ADVANCED_URL="https://son-engr-kr.github.io/the-vive-code-olympics-beta/advanced"
           find docs/advanced -name "*.html" -exec sed -i "s|{{BASE_URL}}|${ADVANCED_URL}|g" {} +
 
       - name: Setup Pages
