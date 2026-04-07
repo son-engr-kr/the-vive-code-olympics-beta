@@ -277,3 +277,42 @@
 - **원인**: 버튼 클릭 결과가 HTML에 반영 안 됨 (JS 동적 렌더링)
 - **vs 우리 앱**: 우리 승
 - **CF33: 버튼 클릭 후 결과가 HTML에 없으면 루프 판정**
+
+---
+
+## gpt-5-mini Judge 재검증 (대회 실제 심판 모델)
+
+> **대회 judge 모델이 gpt-5-mini로 확인됨** → 기존 gpt-4o-mini judge 기준 결과들 재검증 필요
+
+### CF34: gpt-5-mini judge는 UI 세부 품질에 더 민감
+- gpt-4o-mini judge: action 수, 기능 완료 여부 위주
+- gpt-5-mini judge: postmortem에 UI 문제(accessibility, focus visibility, stray elements) 언급 수가 승패 결정
+- **같은 기능이라도 postmortem UI 문제 언급 적은 쪽이 이김**
+- 대응: 깔끔한 semantic HTML, accessibility 요소 신경 쓰기
+
+### CF35: enriched book detail = gpt-5-mini judge에서도 승리 ✅
+- A(base): title, author, year, rating, description, chapters, related
+- B(enriched): A + 유명 인용구(blockquote) + 주요 테마 태그 + 페이지 수 badge
+- **gpt-5-mini judge: B 승**
+- 이유: "cleaner, more intuitive surface-level UX", "fewer immediate UI/accessibility concerns"
+- **결론: enriched 버전을 A 사이트(testlab-mu)에 적용 완료**
+
+### CF36: gpt-5-mini agent는 gpt-4o-mini agent보다 훨씬 많이 탐색
+- gpt-4o-mini: 2-3 actions (일관)
+- gpt-5-mini: 7-10 actions (related books 따라가기, 여러 장르 탐색)
+- gpt-5-mini는 execute_js를 navigate보다 선호
+- **agent 모델은 대회에서 여전히 gpt-4o-mini → 기존 3-action 전략 유효**
+
+### CF37: 우리 앱 vs orange-ruddy → gpt-5-mini judge에서도 우리 승
+- orange-ruddy: loop_detected
+- 우리 앱: completed, 6 actions, 0 errors
+- judge 이유: "BookFinder core flows worked end-to-end"
+
+### CF38: focus visibility 부재 = gpt-5-mini judge 감점 요소
+- judge가 A 사이트 약점으로 지목: "missing focus visibility", "stray/unused elements"
+- **향후 개선 후보**: CSS `focus:outline` 스타일 추가
+
+### A 사이트 업데이트 완료 (2026-04-07)
+- `testlab/src/app/book/[id]/page.tsx`: enriched 버전으로 업데이트
+  - 추가: `pages` (페이지 수 badge), `quote` (blockquote), `themes` (green tag 배열)
+  - 배포: testlab-mu.vercel.app 완료

@@ -91,7 +91,8 @@ Be decisive. Pick one winner. Respond in JSON.
 
 ### 심판 LLM 설정
 - Temperature: `0.3`
-- Provider/Model: 대회 주최측이 결정 (seed에서는 gpt-5-mini 사용)
+- Provider/Model: 대회 주최측이 결정
+- **확인된 대회 judge 모델: `gpt-5-mini`** (주최측 확인)
 
 ### 심판 판단 기준 (프롬프트에서 추출)
 | 긍정 | 부정 |
@@ -138,10 +139,33 @@ Be decisive. Pick one winner. Respond in JSON.
 
 ```python
 GOAL = "Try to accomplish something significant on this website"
-model = "gpt-4o-mini"     # 에이전트 모델
+model = "gpt-4o-mini"     # 에이전트 모델 (세션 실행)
 max_steps = 20
 mode = "desktop"
+# judge 모델은 Run Competition 시 선택 → gpt-5-mini (주최측 확인)
 ```
+
+## 6. gpt-5-mini judge 특성 (실제 대회 심판 모델)
+
+### gpt-4o-mini judge vs gpt-5-mini judge 차이
+| 항목 | gpt-4o-mini judge | gpt-5-mini judge |
+|------|-------------------|------------------|
+| 판단 기준 | action 수, 기능 완료 여부 | UX 품질, 세부 설명 품질 |
+| 승패 요인 | 에러 없이 많은 actions | postmortem에서 발견된 UI 문제 수 |
+| 차이 민감도 | 큰 차이(CSR vs SSR)에 민감 | 작은 차이(accessibility, polish)에도 민감 |
+| 추가 감점 | broken flow, 많은 errors | focus visibility 부재, stray elements |
+
+### gpt-5-mini judge가 중요시하는 것
+- **UI 문제 적을수록** 유리 (postmortem에 UI 문제가 적게 언급됨)
+- **접근성(focus visibility, aria labels)** 부재 언급되면 감점
+- **기능 풍부함** 여전히 중요 (completed + 좋은 flows)
+- postmortem의 Recommendations에 "Fix accessibility"가 나오면 불리
+
+### 실험 결과 (gpt-5-mini 세션 + gpt-5-mini judge)
+| 대결 | 승자 | 이유 |
+|------|------|------|
+| A(base) vs B(enriched: quotes/themes/pages) | **B 승** | "fewer UI/accessibility concerns" |
+| 우리 앱 vs orange-ruddy.vercel.app | **우리 앱 승** | BookFinder 완성도 vs competitor UX issues |
 
 테스트 대상 사이트 (주최자 사이트들 — 대부분 CSR):
 - alcivartech.com

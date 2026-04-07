@@ -68,3 +68,28 @@ completed + 3 actions(자연스러운 플로우) + 0 errors + 풍부한 findings
 - Tailwind CSS
 - Vercel 배포
 - `headers()`로 baseUrl 동적 생성 → 절대경로 자동화
+
+---
+
+## gpt-5-mini Judge 최적화 (2026-04-07 업데이트)
+
+**대회 judge 모델: `gpt-5-mini` (확인됨)**
+- 에이전트 모델은 여전히 `gpt-4o-mini` → 기존 3-action 전략 유지
+- judge 모델이 gpt-5-mini로 변경 → 판단 기준 변화
+
+### gpt-5-mini judge가 추가로 보는 것
+1. **accessibility 문제 언급 수** (focus visibility, aria labels)
+2. **UI 폴리시** (stray elements, unused elements)
+3. **postmortem 품질** — UI 문제가 적을수록 더 좋게 평가
+
+### gpt-5-mini judge 검증 결과
+| 비교 | 결과 |
+|------|------|
+| Base vs Enriched(quotes/themes/pages) | **Enriched 승** (UI 문제 적게 언급) |
+| 우리 앱 vs orange-ruddy | **우리 앱 승** (완성도 차이) |
+
+### 상세 페이지 필수 요소 (업데이트)
+- title, author, year, rating, description, chapters, related items (기존)
+- **+ pages (페이지 수)** ← 추가
+- **+ quote (유명 인용구 blockquote)** ← 추가
+- **+ themes (주요 테마 tag 배열)** ← 추가
