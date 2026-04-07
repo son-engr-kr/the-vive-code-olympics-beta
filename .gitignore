@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.vercel/
+.venv/
+__pycache__/
+*.pyc
+.env
+aiuxtester.db
+AIUXTester/
+testlab-minimal-result/
