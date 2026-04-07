@@ -58,3 +58,9 @@ section h2 { font-size: 1.8rem; margin-bottom: 24px; text-align: center; }
 /* Footer */
 footer { background: #1a1a2e; color: #888; padding: 32px 0; text-align: center; font-size: 0.9rem; margin-top: 48px; }
 footer a { color: #e94560; }
+
+/* Accessibility: focus visibility (CF38) */
+a:focus, button:focus, input:focus, select:focus, textarea:focus {
+  outline: 2px solid #e94560;
+  outline-offset: 2px;
+}
