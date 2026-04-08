@@ -143,7 +143,7 @@ Submitter note: [선택]
 | Link navigate vs Form flow | 링크 3 actions | 폼 2 actions | **Link 승** ("full details" vs "only recommendation") |
 | 버튼 클릭 앱 (orange-ruddy) | — | JS 동적 렌더링 | **loop_detected** (HTML 변화 없어서) |
 | Base vs Enriched(quote/themes/pages) | 기본 상세 페이지 | +blockquote+tags+badge | **Enriched 승** ("fewer UI/accessibility concerns") |
-| RecipeBox Original vs Advanced(계산기) | 계산기 없음 | 계산기 있음 | **Original 압승** (4-8 actions vs 3 actions + calc→loop_detected) |
+| RecipeBox Original vs Advanced(계산기 fix후) | 계산기 없음 | 계산기 있음(fix) | **Advanced 3:0** (execute_js 1회 성공, aria-label 강점, 기능 실연) |
 
 ### 심판 시뮬레이션 (gpt-5-mini judge)
 
@@ -189,7 +189,7 @@ Submitter note: [선택]
 - [ ] JS-only 네비게이션 (href 없는 onClick)
 - [ ] 외부 링크 의존 (에이전트는 사이트 밖으로 안 나감)
 - [ ] 버튼 클릭 후 HTML이 안 바뀌는 JS 동적 렌더링 (CF33: 루프 판정)
-- [ ] **serving size 계산기 같은 JS-only DOM 업데이트** (CF39: loop_detected — 숫자만 바뀌어도 루프 판정)
+- [ ] ~~serving size 계산기~~ (CF39: 구버전은 loop_detected였으나 **readyState+JS배열 fix 후 정상 작동**. execute_js 1회로 완료)
 - [ ] 불필요한 breadcrumb nav (CF31: 오히려 HTML 복잡화 → 불리)
 
 ---
@@ -223,17 +223,15 @@ const baseUrl = `${protocol}://${host}`;
 
 ## RecipeBox 팀원 앱 실험 결과 요약 (2026-04-07)
 
-**결론: Original이 Advanced보다 훨씬 유리**
+**결론: Advanced가 Original보다 유리 (3:0)** ← 팀원 calculator fix 후 역전
 
-| 시나리오 | Original | Advanced (계산기 포함) |
+| 시나리오 | Original | Advanced (계산기 fix) |
 |---------|---------|----------------------|
-| Default goal | 4-8 actions, completed ✅ | 3 actions, completed (계산기 발견→조기종료) |
-| Calculator goal | 해당없음 | **loop_detected** ❌ |
-| 심판 점수 | 높음 (풍부한 탐색) | 낮음 |
+| Default goal | 3 actions, completed | 3 actions, completed ✅ |
+| Calculator goal | 3 actions (얼버무림) | **4 actions (실제 기능 실연)** ✅ |
+| 심판 점수 | 낮음 | **높음** |
 
-**계산기 제거 권고**: JS-only DOM 업데이트 인터랙션은 버튼 3회 클릭 → loop_detected. 계산기를 별도 페이지(/calculator/recipe-id)로 이동시키면 navigate 기반으로 안전해짐.
-
-**최적 제출 앱**: RecipeBox Original (다단계 탐색, 4-8 actions, 풍부한 findings)
+**최적 제출 앱**: RecipeBox Advanced (계산기 fix버전, aria-labels, 기능 실연 가능)
 
 ---
 

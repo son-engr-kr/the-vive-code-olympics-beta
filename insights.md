@@ -325,41 +325,32 @@
 > - **Original**: 계산기 없는 기본 버전
 > - **Advanced**: serving size 계산기 포함 버전
 
-### CF39: JS-only DOM 조작 버튼 → loop_detected ⚠️ CRITICAL
-- **Advanced RecipeBox의 serving size calculator**: `<input>` + `<button onclick="updateServings()">` 
-- 버튼 클릭 시 JS로 DOM의 ingredient 수량만 업데이트 (페이지 이동 없음)
-- **에이전트 행동**: 버튼을 3번 클릭 → DOM fingerprint 미세 변화만 → **loop_detected** 판정
-- 대회 Goal "use the calculator for 8 people" 시도 결과: **loop_detected** (즉시 패배)
-- **원인**: CF33과 동일 패턴 — 클릭 후 HTML 구조 변화 없음 (텍스트 숫자만 바뀜) → 루프 판정
-- **결론: JS-only 인터랙션 (모달, 계산기, 동적 필터 등) = 대회에서 절대 금지**
+### CF39: 구버전 calculator → loop_detected (팀원 fix로 해결됨) ✅ FIXED
+- **구버전** (data-base 속성 방식): 버튼 클릭 → DOM fingerprint 거의 동일 → **loop_detected**
+- **신버전** (readyState check + JS 배열 방식): execute_js 1회로 servings 변경 → ingredient 숫자 업데이트 → DOM fingerprint 변화 → **loop 없이 완료**
+- 팀원의 `fix(calculator): use readyState check and JS array` 커밋이 실제로 문제 해결
+- **결론: 고쳐진 calculator는 안전 — execute_js 1 action으로 정상 작동**
 
-### CF40: Original RecipeBox > Advanced RecipeBox (계산기 있는 버전)
-- **Default goal ("accomplish something significant")**:
-  - Original: completed, **4-8 actions** (browse → cuisine → multiple recipe pages)
-  - Advanced: completed, **3 actions** (에이전트가 calculator를 "유의미한 기능"으로 인식 → 조기 종료)
-  - **Original 승리** — 계산기 기능이 에이전트 탐색을 오히려 줄임
-- **Calculator-specific goal**:
-  - "Find a recipe and use the serving size calculator for 8 people": **loop_detected** (즉시 패배)
-  - "Calculate ingredients for a dinner party of 6": **failed** (DB lock 발생)
-- **결론: 계산기 추가가 모든 시나리오에서 불리**
+### CF40: Advanced RecipeBox > Original ✅ REVERSED (3:0)
+- **재테스트 결과 (Vercel 배포, gpt-4o-mini agent + gpt-5-mini judge)**:
+  - Default goal: 둘 다 3 actions completed, **Advanced 2:0 승리**
+  - Calculator goal: Advanced 4 actions (navigate×3 + execute_js), Original 3 actions → **Advanced 승리**
+- **Advanced가 이기는 이유**:
+  1. Calculator execute_js(1회) = 인터랙티브 기능 실연 → judge가 "working interactive feature" 평가
+  2. aria-label 추가 (`aria-label="Number of servings"`, `aria-label="Calculate ingredient quantities"`) → accessibility 점수
+  3. Calculator goal에서 실제로 기능을 증명 (Original은 "이미 8인분 레시피" 찾아서 얼버무림)
+- **결론: 팀원의 Advanced 버전이 최고 제출 앱**
 
-### CF41: RecipeBox 최적 Goal = 기본 대회 Goal
-- `"Try to accomplish something significant on this website"` → Original에서 **4-8 actions** + rich findings
-- "Find the Margherita Pizza recipe" → 1-2 actions만 (특정 페이지 찾고 종료) → findings 빈약
-- "Browse recipes by cuisine and find an Italian dish" → 3-4 actions
-- **결론: 자유 탐색 Goal = 더 많은 페이지 방문 = 더 풍부한 findings = 더 높은 점수**
-- Original의 구조 (홈 → browse → cuisine별 → 개별 레시피) 가 자연스러운 다단계 탐색 유도
+### CF41: RecipeBox calculator goal에서 Advanced가 유일하게 기능 증명 가능
+- Calculator goal: "Find a recipe and use the serving size calculator to adjust for 8 people"
+  - Advanced: completed, **4 actions** — execute_js로 servings=8 설정, 재료 수량 업데이트 확인 ✅
+  - Original: completed, 3 actions — "Tiramisu는 원래 8인분이라 조정 불필요"라고 얼버무림 ❌
+- 대회 default goal에서도 Advanced가 이김 (interactive feature 증명 가능 구조)
+- **결론: 기능 실연 가능한 앱 > 기능만 있는 앱**
 
-### CF42: Original RecipeBox의 다단계 탐색 구조가 핵심 강점
-- Homepage → Browse Recipes (1) → Cuisine list (e.g. Italian) (2) → Individual recipe page (3) → More recipes (4+)
-- 에이전트가 "more recipes to explore" 인식 → 자연스럽게 4-8 actions까지 진행
-- Advanced는 홈에서 calculator를 발견 → "significant feature 완료" → 조기 종료 (3 actions)
-- **팀원 권고: calculator 제거 또는 페이지 이동 기반으로 교체**
-
-### 최종 권장 제출 앱
-| 앱 | Actions | Findings | 권고 |
-|----|---------|----------|------|
-| RecipeBox Original | 4-8 | 매우 풍부 (여러 레시피 탐색) | ✅ 최고 선택 |
-| RecipeBox Advanced (계산기 제거 버전) | 4-8 | 매우 풍부 | ✅ 괜찮음 |
-| BookFinder (testlab-mu) | 3 | 풍부 (enriched) | ✅ 좋음 |
-| RecipeBox Advanced (계산기 유지) | 3 또는 loop_detected | 빈약 | ❌ 금지 |
+### CF42: Advanced RecipeBox 최종 권장 제출 앱
+| 앱 | Actions | 특징 | 권고 |
+|----|---------|------|------|
+| **RecipeBox Advanced** | **3-4** | 계산기 실연 가능, aria-labels, 풍부한 콘텐츠 | ✅ **최고 선택** |
+| RecipeBox Original | 3 | 계산기 없음, 탐색만 | ✅ 좋음 (백업) |
+| BookFinder (testlab-mu) | 3 | enriched detail page | ✅ 좋음 (백업) |
