@@ -38,6 +38,18 @@
     <section class="recipe-body">
       <div class="container">
         <h2>Ingredients</h2>
+
+        <div class="calculator" aria-label="Serving size calculator">
+          <label for="servings">Adjust servings:</label>
+          <input type="number" id="servings" value="4" min="1" max="20"
+                 aria-label="Number of servings"
+                 oninput="updateServings(this.value)">
+          <button type="button" onclick="updateServings(document.getElementById('servings').value)"
+                  aria-label="Calculate ingredient quantities">
+            Calculate Ingredients
+          </button>
+          <p id="servings-result">Showing quantities for 4 servings</p>
+        </div>
         <ul>
           <li><strong>Broth:</strong></li>
           <li>1.5kg pork leg bones (femur), split lengthwise by your butcher</li>
@@ -139,5 +151,6 @@
       <p>RecipeBox — Authentic recipes from around the world. <a href="{{BASE_URL}}/about.html">About RecipeBox</a></p>
     </div>
   </footer>
+  <script src="{{BASE_URL}}/calculator.js"></script>
 </body>
 </html>

@@ -28,7 +28,13 @@
 
     <section>
       <div class="container">
-        <div class="card-grid">
+        
+        <div class="filter-bar" role="search">
+          <input type="search" id="cuisine-search" placeholder="Search cuisines…"
+                 aria-label="Search cuisines"
+                 oninput="filterCuisineCards(this.value)">
+        </div>
+<div class="card-grid" id="cuisine-grid">
           <article class="card">
             <h3>Italian Cuisine</h3>
             <div class="meta">5 recipes available</div>
@@ -75,5 +81,15 @@
       <p>RecipeBox — Authentic recipes from around the world. <a href="{{BASE_URL}}/about.html">About RecipeBox</a></p>
     </div>
   </footer>
+
+  <script>
+  function filterCuisineCards(q) {
+    var cards = document.querySelectorAll('#cuisine-grid .card');
+    q = q.toLowerCase();
+    cards.forEach(function(c) {
+      c.classList.toggle('hidden', q && !c.textContent.toLowerCase().includes(q));
+    });
+  }
+  </script>
 </body>
 </html>

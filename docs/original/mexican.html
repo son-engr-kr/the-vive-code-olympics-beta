@@ -28,7 +28,16 @@
 
     <section>
       <div class="container">
-        <div class="card-grid">
+        
+        <div class="filter-bar" aria-label="Filter recipes">
+          <div class="filter-tabs" role="group" aria-label="Filter by difficulty">
+            <button class="filter-tab active" onclick="filterRecipes('all', this)" aria-pressed="true">All</button>
+            <button class="filter-tab" onclick="filterRecipes('easy', this)" aria-pressed="false">Easy</button>
+            <button class="filter-tab" onclick="filterRecipes('medium', this)" aria-pressed="false">Medium</button>
+            <button class="filter-tab" onclick="filterRecipes('hard', this)" aria-pressed="false">Hard</button>
+          </div>
+        </div>
+<div class="card-grid" id="recipe-grid">
           <article class="card">
             <h3>Tacos al Pastor</h3>
             <div class="meta">1 hr 30 min — Medium — 6 servings</div>
@@ -69,5 +78,22 @@
       <p>RecipeBox — Authentic recipes from around the world. <a href="{{BASE_URL}}/about.html">About RecipeBox</a></p>
     </div>
   </footer>
+
+  <script>
+  function filterRecipes(diff, btn) {
+    document.querySelectorAll('.filter-tab').forEach(function(b) {
+      b.classList.remove('active');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    btn.classList.add('active');
+    btn.setAttribute('aria-pressed', 'true');
+    var cards = document.querySelectorAll('#recipe-grid .card');
+    cards.forEach(function(c) {
+      if (diff === 'all') { c.classList.remove('hidden'); return; }
+      var meta = (c.querySelector('.meta') || {}).textContent || '';
+      c.classList.toggle('hidden', !meta.toLowerCase().includes(diff));
+    });
+  }
+  </script>
 </body>
 </html>
