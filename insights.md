@@ -316,3 +316,50 @@
 - `testlab/src/app/book/[id]/page.tsx`: enriched 버전으로 업데이트
   - 추가: `pages` (페이지 수 badge), `quote` (blockquote), `themes` (green tag 배열)
   - 배포: testlab-mu.vercel.app 완료
+
+---
+
+## RecipeBox (팀원 앱) 실험 결과 (2026-04-07)
+
+> 팀원이 제작한 정적 HTML RecipeBox (GitHub Pages 배포)
+> - **Original**: 계산기 없는 기본 버전
+> - **Advanced**: serving size 계산기 포함 버전
+
+### CF39: JS-only DOM 조작 버튼 → loop_detected ⚠️ CRITICAL
+- **Advanced RecipeBox의 serving size calculator**: `<input>` + `<button onclick="updateServings()">` 
+- 버튼 클릭 시 JS로 DOM의 ingredient 수량만 업데이트 (페이지 이동 없음)
+- **에이전트 행동**: 버튼을 3번 클릭 → DOM fingerprint 미세 변화만 → **loop_detected** 판정
+- 대회 Goal "use the calculator for 8 people" 시도 결과: **loop_detected** (즉시 패배)
+- **원인**: CF33과 동일 패턴 — 클릭 후 HTML 구조 변화 없음 (텍스트 숫자만 바뀜) → 루프 판정
+- **결론: JS-only 인터랙션 (모달, 계산기, 동적 필터 등) = 대회에서 절대 금지**
+
+### CF40: Original RecipeBox > Advanced RecipeBox (계산기 있는 버전)
+- **Default goal ("accomplish something significant")**:
+  - Original: completed, **4-8 actions** (browse → cuisine → multiple recipe pages)
+  - Advanced: completed, **3 actions** (에이전트가 calculator를 "유의미한 기능"으로 인식 → 조기 종료)
+  - **Original 승리** — 계산기 기능이 에이전트 탐색을 오히려 줄임
+- **Calculator-specific goal**:
+  - "Find a recipe and use the serving size calculator for 8 people": **loop_detected** (즉시 패배)
+  - "Calculate ingredients for a dinner party of 6": **failed** (DB lock 발생)
+- **결론: 계산기 추가가 모든 시나리오에서 불리**
+
+### CF41: RecipeBox 최적 Goal = 기본 대회 Goal
+- `"Try to accomplish something significant on this website"` → Original에서 **4-8 actions** + rich findings
+- "Find the Margherita Pizza recipe" → 1-2 actions만 (특정 페이지 찾고 종료) → findings 빈약
+- "Browse recipes by cuisine and find an Italian dish" → 3-4 actions
+- **결론: 자유 탐색 Goal = 더 많은 페이지 방문 = 더 풍부한 findings = 더 높은 점수**
+- Original의 구조 (홈 → browse → cuisine별 → 개별 레시피) 가 자연스러운 다단계 탐색 유도
+
+### CF42: Original RecipeBox의 다단계 탐색 구조가 핵심 강점
+- Homepage → Browse Recipes (1) → Cuisine list (e.g. Italian) (2) → Individual recipe page (3) → More recipes (4+)
+- 에이전트가 "more recipes to explore" 인식 → 자연스럽게 4-8 actions까지 진행
+- Advanced는 홈에서 calculator를 발견 → "significant feature 완료" → 조기 종료 (3 actions)
+- **팀원 권고: calculator 제거 또는 페이지 이동 기반으로 교체**
+
+### 최종 권장 제출 앱
+| 앱 | Actions | Findings | 권고 |
+|----|---------|----------|------|
+| RecipeBox Original | 4-8 | 매우 풍부 (여러 레시피 탐색) | ✅ 최고 선택 |
+| RecipeBox Advanced (계산기 제거 버전) | 4-8 | 매우 풍부 | ✅ 괜찮음 |
+| BookFinder (testlab-mu) | 3 | 풍부 (enriched) | ✅ 좋음 |
+| RecipeBox Advanced (계산기 유지) | 3 또는 loop_detected | 빈약 | ❌ 금지 |
