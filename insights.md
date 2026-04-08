@@ -348,6 +348,14 @@
 - 대회 default goal에서도 Advanced가 이김 (interactive feature 증명 가능 구조)
 - **결론: 기능 실연 가능한 앱 > 기능만 있는 앱**
 
+### CF43: RecipeBox Advanced 최적 Goal = 대회 기본 Goal
+- 라운드로빈 비교 (3 goals × gpt-5-mini judge):
+  - **A "Try to accomplish something significant on this website"**: 3 actions, **2승** ✅
+  - C "Explore this website and find a recipe to cook tonight": 0 actions (홈에서 바로 종료), 1승
+  - B "Find a recipe...adjust for 8 people": 3 actions, 0승 (Tiramisu가 원래 8인분이라 계산기 안 씀)
+- **Goal B가 0승인 이유**: 에이전트가 "serving already matches" 레시피 찾고 얼버무림 → 계산기 실연 실패
+- **결론: 대회 기본 Goal이 RecipeBox Advanced에서도 최적** — 3 actions + rich findings 보장
+
 ### CF42: Advanced RecipeBox 최종 권장 제출 앱
 | 앱 | Actions | 특징 | 권고 |
 |----|---------|------|------|
