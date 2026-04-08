@@ -93,3 +93,65 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 }
 .calculator button:hover { background: #c81e45; }
 #servings-result { margin-top: 0.5rem; font-style: italic; color: #555; }
+
+/* Search & filter bar */
+.filter-bar {
+  display: flex; gap: 12px; align-items: center;
+  flex-wrap: wrap; margin-bottom: 24px;
+  background: #fff; padding: 16px; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.filter-bar input[type="search"] {
+  flex: 1; min-width: 200px; padding: 10px 14px;
+  border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;
+}
+.filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-tab {
+  padding: 8px 16px; border-radius: 20px; border: 1px solid #ddd;
+  background: #f5f5f5; cursor: pointer; font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.filter-tab.active, .filter-tab:hover {
+  background: #e94560; color: #fff; border-color: #e94560;
+}
+.card.hidden { display: none; }
+
+/* Breadcrumb */
+.breadcrumb {
+  background: #f0f0f5; padding: 10px 0;
+  font-size: 0.9rem; color: #666;
+}
+.breadcrumb .container { display: flex; gap: 8px; align-items: center; }
+.breadcrumb a { color: #e94560; }
+.breadcrumb span { color: #999; }
+
+/* Stats bar */
+.stats-bar {
+  background: #1a1a2e; color: #fff; padding: 12px 0;
+}
+.stats-bar .container {
+  display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+}
+.stat-item { text-align: center; }
+.stat-item .num { font-size: 1.6rem; font-weight: 700; color: #e94560; }
+.stat-item .lbl { font-size: 0.8rem; color: #aaa; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* Step timer */
+.step-timer {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #e94560; color: #fff; padding: 4px 12px;
+  border-radius: 20px; font-size: 0.85rem; cursor: pointer;
+  border: none; margin-left: 8px; transition: background 0.2s;
+}
+.step-timer:hover { background: #c81e45; }
+.step-timer.running { background: #2c9e3a; }
+
+/* Favorites button */
+.fav-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; border: 2px solid #e94560;
+  color: #e94560; padding: 8px 18px; border-radius: 8px;
+  cursor: pointer; font-size: 0.95rem; font-weight: 600;
+  transition: all 0.2s; margin-top: 16px;
+}
+.fav-btn:hover, .fav-btn.saved { background: #e94560; color: #fff; }
